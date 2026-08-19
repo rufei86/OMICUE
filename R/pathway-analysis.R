@@ -1,4 +1,4 @@
-#' Run differential-feature and pathway-style comparisons across groups
+#' Run differential-feature comparisons across groups
 #'
 #' For every pairwise (or reference-vs-other) combination of levels of
 #' `factor`, runs the requested per-feature test (Wilcoxon, logistic,
@@ -48,7 +48,7 @@
 #'   As a side effect, writes `pwd/<factor><name_suffix> - Pathway
 #'   Analysis/` with subfolders and summary CSVs.
 #' @export
-PathwayAnalysis <- function(
+omicue_de <- function(
   factor,
   omic_name,
   level_id = NULL,
