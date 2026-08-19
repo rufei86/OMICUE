@@ -1,0 +1,53 @@
+Package: OMICUE
+Title: Tools for Multi-Omic Differential Analysis, Enrichment, and Visualization
+Version: 0.1.0
+Authors@R:
+    person(
+        given = "Rufei",
+        family = "Lu",
+        email = "rufei-lu@omrf.org",
+        role = c("aut", "cre")
+    )
+Description: A collection of functions for wrangling multi-omic datasets
+    (proteomics, transcriptomics, and similar assays), running
+    differential-feature comparisons (Wilcoxon, logistic/linear regression,
+    mixed-effects regression, and rank-based regression), performing gene
+    set enrichment analysis against Gene Ontology, KEGG, and Reactome,
+    building protein co-expression networks, and generating publication-
+    style plots such as volcano plots, pathway heatmaps, circular
+    Manhattan-style plots, and QC diagrams.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1.0)
+Imports:
+    AnnotationDbi,
+    clusterProfiler,
+    dplyr,
+    dynamicTreeCut,
+    eulerr,
+    ggplot2,
+    ggrepel,
+    gplots,
+    gridExtra,
+    grDevices,
+    grid,
+    igraph,
+    lme4,
+    lmerTest,
+    methods,
+    parallel,
+    pheatmap,
+    RColorBrewer,
+    ReactomePA,
+    Rfit,
+    stats,
+    stringr,
+    tibble,
+    tidyr,
+    utils
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0
