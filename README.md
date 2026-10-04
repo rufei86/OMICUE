@@ -29,7 +29,7 @@ BiocManager::install(c("AnnotationDbi", "clusterProfiler", "ReactomePA"))
 if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes")
 }
-remotes::install_github("<your-github-username>/OMICUE")
+remotes::install_github("rufei86/OMICUE")
 ```
 
 Replace `<your-github-username>` with wherever this repository ends up
@@ -60,7 +60,7 @@ being hosted.
 
 | Function | Description |
 |---|---|
-| `PathwayAnalysis()` | End-to-end wrapper that runs differential testing, then GO/KEGG/Reactome enrichment on the resulting hit list. |
+| `omicue_de()` | End-to-end wrapper that runs differential testing, then GO/KEGG/Reactome enrichment on the resulting hit list. |
 | `pathGeneList()` | Builds a named, ranked gene list suitable for GSEA-style enrichment functions. |
 | `Enrich_GO()` | Gene Ontology enrichment via `clusterProfiler`. |
 | `Enrich_KEGG()` | KEGG pathway enrichment via `clusterProfiler`. |
