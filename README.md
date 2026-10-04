@@ -88,25 +88,6 @@ being hosted.
 | `staggeredVolcano()` | Volcano plot faceted/staggered across multiple contrasts. |
 | `olink_qc_graph()` | QC plot tailored to Olink proteomics output. |
 
-## Development notes
-
-- Documentation (`man/*.Rd`) and `NAMESPACE` are generated with
-  [`roxygen2`](https://roxygen2.r-lib.org/) (v8.1.0) from the `@`-tagged
-  comments in each `R/*.R` file. After editing any function's roxygen
-  comments, regenerate both with:
-
-  ```r
-  roxygen2::roxygenise()
-  ```
-
-- Unit tests (`tests/testthat/`) cover the dependency-light functions
-  (`omicFilter()`, `omicDeltaByVisit()`, `simpleWilcox()`, `glm_model()`)
-  that only require base R plus `dplyr`/`tidyr`/`stringr`. Run with:
-
-  ```r
-  devtools::test()
-  ```
-
 ## License
 
 MIT © Rufei Lu. See [`LICENSE.md`](LICENSE.md) for the full text.
