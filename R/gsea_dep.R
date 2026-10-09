@@ -134,10 +134,10 @@ run_enricher <- function(
   if (length(gene_list) == 0L) {
     stop("No nonmissing, nonempty gene IDs found.")
   }
-  
+
   gene_list <- df[[geneid]]
   clusterProfiler::enricher(
-    geneList = gene_list,
+    gene = gene_list, 
     TERM2GENE = term2gene,
     minGSSize = 10,
     maxGSSize = 500,
