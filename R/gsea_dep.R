@@ -66,23 +66,30 @@ t2g_list <- purrr::map(gs_collections, function(x) {
 # ---- Ranking metric --------------------------------------------------------
 
 #' Named, strictly sorted ranking vector: -log10(Pvalue) * log2FC
-build_ranked_list <- function(df) {
+build_ranked_list <- function(df, rank_metric, geneid) {
   ranked <- df |>
-    dplyr::mutate(rank_metric = dis_coef) |>
+    dplyr::mutate(rank_metric = .data[[rank_metric]]) |>
     dplyr::filter(is.finite(rank_metric)) |>
-    dplyr::arrange(dplyr::desc(rank_metric), GeneID) |>
-    dplyr::distinct(GeneID, .keep_all = TRUE)
+    dplyr::arrange(dplyr::desc(rank_metric), .data[[geneid]]) |>
+    dplyr::distinct(.data[[geneid]], .keep_all = TRUE)
 
   gene_list <- ranked$rank_metric
-  names(gene_list) <- as.character(ranked$GeneID)
+  names(gene_list) <- as.character(ranked[[geneid]])
   gene_list
 }
 
 # ---- GSEA runners ----------------------------------------------------------
 
 #' Run GSEA for one comparison against one TERM2GENE table
-run_gsea_ranked <- function(df, term2gene, adjust_method = "fdr", seed = 7419) {
-  gene_list <- build_ranked_list(df)
+run_gsea_ranked <- function(
+  df,
+  rank_metric = "dis_coef", 
+  geneid = "GeneID",
+  term2gene,
+  adjust_method = "fdr",
+  seed = 7419
+) {
+  gene_list <- build_ranked_list(df, rank_metric, geneid)
   set.seed(seed)
   clusterProfiler::GSEA(
     geneList = gene_list,
@@ -97,17 +104,83 @@ run_gsea_ranked <- function(df, term2gene, adjust_method = "fdr", seed = 7419) {
   )
 }
 
-#' Run GSEA for every comparison in a list of DE tables
-run_gsea_collection <- function(
-  dep_list,
+#' Run Enrich for one comparison against one TERM2GENE table
+run_enricher <- function(
+  df,
+  geneid,
   term2gene,
   adjust_method = "fdr",
   seed = 7419
 ) {
-  purrr::imap(
-    dep_list,
-    ~ run_gsea_ranked(.x, term2gene, adjust_method = adjust_method, seed = seed)
+  if (
+    !is.character(geneid) ||
+      length(geneid) != 1L ||
+      !geneid %in% names(df)
+  ) {
+    stop("`geneid` must name one column in `df`.")
+  }
+
+  if (!is.data.frame(term2gene) || ncol(term2gene) != 2L) {
+    stop("`term2gene` must be a two-column data frame: term, gene.")
+  }
+
+  clean_ids <- function(x) {
+    x <- as.character(x)
+    unique(x[!is.na(x) & nzchar(x)])
+  }
+
+  gene_list <- clean_ids(df[[geneid]])
+
+  if (length(gene_list) == 0L) {
+    stop("No nonmissing, nonempty gene IDs found.")
+  }
+  
+  gene_list <- df[[geneid]]
+  clusterProfiler::enricher(
+    geneList = gene_list,
+    TERM2GENE = term2gene,
+    minGSSize = 10,
+    maxGSSize = 500,
+    pvalueCutoff = 1,
+    pAdjustMethod = adjust_method
   )
+}
+
+#' Run GSEA for every comparison in a list of DE tables
+run_gsea_collection <- function(
+  dep_list,
+  rank_metric = "dis_coef", 
+  geneid = "GeneID",
+  term2gene,
+  adjust_method = "fdr",
+  seed = 7419,
+  enrich_method = c("gsea", "enricher")
+) {
+  if (enrich_method == "gsea") {
+    purrr::imap(
+      dep_list,
+      ~ run_gsea_ranked(
+        .x,
+        term2gene,
+        rank_metric = rank_metric,
+        geneid = geneid,
+        adjust_method <- adjust_method,
+        seed = seed
+      )
+    )
+  } else if (enrich_method == "enricher") {
+    purrr::imap(
+      dep_list,
+      ~ run_enricher(
+        .x,
+        geneid,
+        term2gene,
+        adjust_method <- adjust_method,
+        seed = seed
+      )
+    )
+  }
+  
 }
 
 #' Collapse a list of gseaResult objects into one long tibble
